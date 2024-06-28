@@ -43,7 +43,7 @@ jobs:
           name: terraform-plan
           path: tfplan
       - name: Terraform apply
-        uses: terraform apply    
+        run: terraform apply -auto-approve 
   # deploy:
   #   name: 'Terraform Apply'
   #   runs-on: ubuntu-latest
