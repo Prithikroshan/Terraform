@@ -7,11 +7,11 @@ on:
   pull_request:
 
 defaults:
-  run:
+  rujobs:n:
     shell: bash
 
-
-terraform-run-local:
+jobs:
+   terraform-run-local:
     name: 'Terraform Run Local'
     runs-on: ubuntu-latest
    
