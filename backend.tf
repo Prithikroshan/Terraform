@@ -5,6 +5,6 @@ terraform {
     dynamodb_table          = "Terraform_state_lock"
     key                     = "terraform-project/terraform.tfstate"
     region                  = "eu-north-1"
-    acl            = "bucket-owner-full-control"
+    acl                     = "bucket-owner-full-control"
   }
 }
