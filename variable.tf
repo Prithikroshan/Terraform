@@ -24,7 +24,7 @@ variable "private_subnet_2_cidr" {
 variable "availability_zones" {
   description = "Availability zones"
   type        = list(string)
-  default     = ["us-east-2a", "us-east-2b", "us-east-2c"]
+  default     = ["eu-north-1a", "eu-north-1b"]
 }
 # load balancer
 variable "health_check_path" {

@@ -31,7 +31,7 @@ resource "aws_subnet" "public_subnet2" {
   availability_zone = var.availability_zones[1]
 }
 
-# Private subnets
+
 resource "aws_subnet" "private_subnet" {
   tags = {
     Name = "privat_subnet"
@@ -40,14 +40,13 @@ resource "aws_subnet" "private_subnet" {
   vpc_id            = aws_vpc.test_vpc.id
   availability_zone = var.availability_zones[0]
 }
-# Internet Gateway for the public subnet
+
 resource "aws_internet_gateway" "test_igw" {
   tags = {
     Name = "test_igw"
   }
   vpc_id = aws_vpc.test_vpc.id
 }
-# NAT Gateway for the public subnet
 resource "aws_nat_gateway" "nat_gateway" {
   subnet_id     = aws_subnet.public_subnet.id
   allocation_id = aws_eip.nat_eip.id 
