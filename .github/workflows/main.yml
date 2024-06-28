@@ -20,6 +20,10 @@ jobs:
        # We keep Terraform files in the terraform directory.
        working-directory: ./terraform
     steps:
+      
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+
       - name: Checkout repository
         uses: actions/checkout@v2
 
@@ -29,7 +33,6 @@ jobs:
          terraform_version: 1.8.5
       
       - name: Terraform init
-        uses: hashicorp/setup-terraform@v3
         id: init
         run: terraform init        
   #     - name: Terraform version
