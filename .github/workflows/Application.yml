@@ -1,0 +1,39 @@
+
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+      - name: Build and package
+        run: |
+          mvn clean package
+          mkdir -p target/deploy
+          cp target/*.jar target/deploy/
+      - name: Deploy to EC2
+        uses: aws-actions/deploy-ec2@v1
+        with:
+          access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          instance-ids: 'i-03e4777032741cd8a'
+          port: 22
+          deploy-path: '/home/ubuntu/my-app'
+          owner: 'ubuntu'
+          group: 'ubuntu'
+          scripts: |
+            sudo systemctl stop my-app
+            sudo cp -r /home/ubuntu/my-app /home/ubuntu/my-app-backup
+            sudo cp -r target/deploy/* /home/ubuntu/my-app
+            sudo chown -R ubuntu:ubuntu /home/ubuntu/my-app
+            sudo systemctl start my-app
