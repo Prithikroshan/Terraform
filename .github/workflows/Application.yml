@@ -1,5 +1,4 @@
-
-name: Deploy to EC2
+name: Deploy Tomcat
 
 on:
   push:
@@ -9,32 +8,44 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Setup Java
-        uses: actions/setup-java@v2
-        with:
-          java-version: '17'
-      - name: Build and package
-        run: |
-          mvn clean package
-          mkdir -p target/deploy
-          cp target/*.jar target/deploy/
-      - name: Deploy to EC2
-        uses: aws-actions/deploy-ec2@v1
-        with:
-          access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          instance-ids: 'i-0b635e4b54b3cb28b
-'
-          port: 22
-          deploy-path: '/home/ubuntu/java-hello-world-with-maven'
-          owner: 'ubuntu'
-          group: 'ubuntu'
-          scripts: |
-            sudo systemctl stop java-hello-world-with-maven
-            sudo cp -r /home/ubuntu/java-hello-world-with-maven /home/ubuntu/java-hello-world-with-maven-backup
-            sudo cp -r target/deploy/* /home/ubuntu/java-hello-world-with-maven
-            sudo chown -R ubuntu:ubuntu /home/ubuntu/java-hello-world-with-maven
-            sudo systemctl start java-hello-world-with-maven
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Install AWS CLI
+      run: sudo apt-get install -y awscli
+
+    - name: Configure AWS CLI
+      run: |
+        aws configure set aws_access_key_id ${{ secrets.ACCESS_KEY_ID }}
+        aws configure set aws_secret_access_key ${{ secrets.SECRET_ACCESS_KEY }}
+        aws configure set region ${{ secrets.EC2_REGION }}
+
+    - name: Start EC2 Instance
+      run: |
+        aws ec2 start-instances --instance-ids ${{ secrets.EC2_INSTANCE_ID }}
+        aws ec2 wait instance-running --instance-ids ${{ secrets.EC2_INSTANCE_ID }}
+
+    - name: Install Tomcat
+      env:
+        EC2_USER: ubuntu
+        EC2_HOST: ${{ secrets.EC2_HOST }}
+        EC2_KEY: ${{ secrets.EC2_KEY }}
+      run: |
+        echo "${{ secrets_EC2_PRIVATE_KEY }}" > ec2-key.pem
+        chmod 400 ec2-key.pem
+        ssh -o StrictHostKeyChecking=no -i ec2-key.pem ${EC2_USER}@${EC2_HOST} << 'EOF'
+          sudo apt update
+          sudo apt install -y openjdk-11-jdk
+          wget https://downloads.apache.org/tomcat/tomcat-9/v9.0.65/bin/apache-tomcat-9.0.65.tar.gz
+          sudo mkdir -p /opt/tomcat
+          sudo tar xzvf apache-tomcat-9.0.65.tar.gz -C /opt/tomcat --strip-components=1
+          sudo chown -R ${USER}:${USER} /opt/tomcat
+          sudo chmod +x /opt/tomcat/bin/*.sh
+          sudo cp /opt/tomcat/bin/catalina.sh /etc/init.d/tomcat
+          sudo update-rc.d tomcat defaults
+          sudo service tomcat start
+        EOF
+
+   

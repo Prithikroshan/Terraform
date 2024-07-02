@@ -44,32 +44,7 @@ jobs:
           path: tfplan
       - name: Terraform apply
         run: terraform apply -auto-approve 
-  # deploy:
-  #   name: 'Terraform Apply'
-  #   runs-on: ubuntu-latest
-  #   needs: terraform
-  #   if: github.ref == 'refs/heads/main'
-  #   defaults:
-  #     run:
-  #       working-directory: self-hosted
-  #   steps:
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v2
-  #     - name: Set up Terraform
-  #       uses: hashicorp/setup-terraform@v1
-  #       with:
-  #         terraform_version: 1.8.5
-  #     - name: Download plan result
-  #       uses: actions/download-artifact@v2
-  #       with:
-  #         name: terraform-plan
-  #         path: tfplan
-  #     - name: Terraform Apply
-  #       run: terraform apply -input=false tfplan
-  #       # env:
-  #       #   AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID}}
-  #       #   AWS_SECRET_ACCESS_KEY: ${{ secrets.SECRET_ACCESS_KEY }}
-  #       #   AWS_REGION: ${{ env.AWS_REGION }}
+
 
 
 
