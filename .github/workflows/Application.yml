@@ -26,7 +26,8 @@ jobs:
         with:
           access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          instance-ids: 'i-03e4777032741cd8a'
+          instance-ids: 'i-0b635e4b54b3cb28b
+'
           port: 22
           deploy-path: '/home/ubuntu/java-hello-world-with-maven'
           owner: 'ubuntu'
