@@ -33,9 +33,7 @@ jobs:
           group: 'ubuntu'
           scripts: |
             sudo systemctl stop my-app
-            sudo cp -r /home/ubuntu/my-app /home/ubuntu/java-hello-world-with-maven
-
+            sudo cp -r /home/ubuntu/my-app /home/ubuntu/my-app-backup
             sudo cp -r target/deploy/* /home/ubuntu/my-app
-            sudo chown -R ubuntu:ubuntu /home/ubuntu/java-hello-world-with-maven
-
-            sudo systemctl start java-hello-world-with-maven
+            sudo chown -R ubuntu:ubuntu /home/ubuntu/my-app
+            sudo systemctl start my-app
